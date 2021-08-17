@@ -12,7 +12,6 @@ app.use(cors());
 //below lines of code is taken directly from jsonwebtoken
 //https://www.npmjs.com/package/jsonwebtoken
 //-------------------------------
-var jwksClient = require('jwks-rsa');
 var client = jwksClient({
   //Personal Key not from them
   jwksUri: 'https://dev-ccettuzw.us.auth0.com/.well-known/jwks.json'
@@ -24,10 +23,6 @@ function getKey(header, callback){
   });
 }
 //---------------------------------
- 
-jwt.verify(token, getKey, options, function(err, decoded) {
-  console.log(decoded.foo) // bar
-});
 
 const PORT = process.env.PORT || 3001;
 
@@ -36,7 +31,7 @@ app.get('/test', (request, response) => {
   const token = request.headers.authorization.split(' ')[1];
 
   //from the docs. 
-  jwt.verify(token, getKey, {}, (err, user){
+  jwt.verify(token, getKey, {}, function(err, user) {
     if(err){
       response.status(500).send('invalid token');
     }
