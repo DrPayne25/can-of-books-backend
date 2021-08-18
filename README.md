@@ -22,5 +22,16 @@ Finish time: 6:15
 
 Actual time needed to complete: 45min
 
+## Change Log
+Name of feature: Setup - Lab 12 Part 1 backend
+
+Estimate of time needed to complete: 1hrmin
+
+Start time: 9
+
+Finish time: 10:29
+
+Actual time needed to complete: 1hr 29min
+
 ## Credit and Collaborations
 Codefellows supplied all starter code for this lab https://github.com/codefellows/can-of-books-frontend-template
