@@ -5,6 +5,8 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
+const mongoose = require('mongoose')
+const BookModel = require('./models/books.js')
 
 const app = express();
 app.use(cors());
@@ -24,7 +26,7 @@ function getKey(header, callback){
 }
 //---------------------------------
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT ;
 
 app.get('/test', (request, response) => {
   //grab the token sent by the front end
@@ -39,5 +41,48 @@ app.get('/test', (request, response) => {
   })
 
 })
+
+app.get('/books', async (req, res) => {
+  try {
+    let booksdb = await BookModel.find({});
+    res.status(200).send(booksdb);
+  }
+  catch (err) {
+    res.status(500).send('dbase error');
+  }
+})
+
+mongoose.connect('mongodb://127.0.0.1:27017/books', {
+  useNewURLParser: true,
+  useUnifiedTopology: true
+})
+  .then(async ()=> {
+    console.log('Connected to the database');
+
+    let books = await BookModel.find({});
+    if(books.length === 2) {
+      await addBook({
+        title: "subtle art of not giving an f",
+        description: "The Subtle Art of Not Giving a Fuck: A Counterintuitive Approach to Living a Good Life is the second book by blogger and author Mark Manson.",
+        status: 'Dont Know what this is',
+        email: 'alex.payne1125@gmail.com',
+      });
+    }
+  });
+
+  async function addBook(obj){
+    let newBook = new BookModel(obj);
+    return await newBook.save();
+  }
+
+  async function clear() {
+    try{
+      await BookModel.deleteMany({})
+      console.log('DBase is now gone your welcome');
+    }
+    catch(err){
+      console.log('Error clearing DB');
+    }
+  }
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
