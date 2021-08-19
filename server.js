@@ -46,10 +46,22 @@ app.get('/test', (request, response) => {
 app.get('/clear', clear);
 app.get('/seed', seed);
 
-app.get('/books', async (req, res) => {
+app.get('/books', (req, res) => {
+  console.log('I am here')
   try {
-    let booksdb = await BookModel.find({});
-    res.status(200).send(booksdb);
+    console.log('I am also here just an fyi')
+    const token = req.headers.authorization.split(' ')[1];
+    console.log(token);
+    //from the docs. 
+    jwt.verify(token, getKey, {}, function (err, user) {
+      console.log('I am in the token now hehehe')
+      if (err) {
+        response.status(500).send('invalid token');
+      }
+      BookModel.find((err, booksdb)=> {
+        res.status(200).send(booksdb);
+      });
+    })
   }
   catch (err) {
     res.status(500).send('dbase error');
