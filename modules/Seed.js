@@ -4,7 +4,7 @@ const BookModel = require('../models/BooksModel.js');
 const AddBook = require('../modules/AddBook.js')
 
 
-async function seed(req, res) {
+async function Seed(req, res) {
   let books = await BookModel.find({});
   try {
     if (books.length === 0) {
@@ -32,3 +32,5 @@ async function seed(req, res) {
     res.status(500).send('Error clearing DB');
   }
 }
+
+module.exports = Seed

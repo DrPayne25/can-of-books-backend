@@ -9,6 +9,7 @@ const mongoose = require('mongoose');
 const BookModel = require('./models/BooksModel.js');
 const ClearBooks = require('./modules/ClearBooks.js');
 const AddBook = require('./modules/AddBook')
+const Seed = require('./modules/Seed')
 
 const app = express();
 app.use(cors());
@@ -45,7 +46,7 @@ app.get('/test', (request, response) => {
 })
 
 app.get('/clear', ClearBooks);
-app.get('/seed', seed);
+app.get('/seed', Seed);
 app.get('/add', AddBook)
 
 app.get('/books', (req, res) => {
