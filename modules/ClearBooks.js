@@ -1,8 +1,9 @@
 'use strict'
 
-const BookModel = require('./models/books.js')
+const BookModel = require('../models/BooksModel.js');
 
-async function Clear(req, res) {
+async function clearData(req, res) {
+  console.log("ClearData Clicked")
   try{
     await BookModel.deleteMany({})
     res.status(200).send('DBase is now gone your welcome');
@@ -12,5 +13,5 @@ async function Clear(req, res) {
   }
 }
 
-module.exports = (Clear);
+module.exports = clearData;
 
