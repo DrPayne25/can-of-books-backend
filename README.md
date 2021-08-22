@@ -33,5 +33,15 @@ Finish time: 10:29
 
 Actual time needed to complete: 1hr 29min
 
+Name of feature: Lab 13 
+
+Estimate of time needed to complete: 3hrs
+
+Start time: 1:45pm
+
+Finish time: 6:29
+
+Actual time needed to complete: 5hrs
+
 ## Credit and Collaborations
 Codefellows supplied all starter code for this lab https://github.com/codefellows/can-of-books-frontend-template
