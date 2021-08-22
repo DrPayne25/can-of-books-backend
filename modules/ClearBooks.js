@@ -10,8 +10,8 @@ async function clearData(req, res) {
   catch(err){
     res.status(500).send('Error clearing DB');
   }
+  console.log("DB has been Cleared")
 }
-console.log("DB has been Cleared")
 
 module.exports = clearData;
 
