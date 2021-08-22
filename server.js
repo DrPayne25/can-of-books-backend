@@ -12,6 +12,7 @@ const AddBook = require('./modules/AddBook')
 const Seed = require('./modules/Seed')
 
 const app = express();
+app.use(express.json())
 app.use(cors());
 
 //below lines of code is taken directly from jsonwebtoken
@@ -42,8 +43,17 @@ app.get('/test', (request, response) => {
     }
     response.send(user);
   })
-
+  
 })
+
+mongoose.connect('mongodb://127.0.0.1:27017/books', {
+  useNewURLParser: true,
+  useUnifiedTopology: true
+})
+  .then(async () => {
+    console.log('Connected to the database');
+
+  });
 
 app.get('/clear', ClearBooks);
 app.get('/seed', Seed);
@@ -72,14 +82,35 @@ app.get('/books', (req, res) => {
   }
 })
 
-mongoose.connect('mongodb://127.0.0.1:27017/books', {
-  useNewURLParser: true,
-  useUnifiedTopology: true
-})
-  .then(async () => {
-    console.log('Connected to the database');
+app.get('/books-test', (req, res) => {
+  // console.log('I am here')
+  try {
+    BookModel.find((err, booksdb)=> {
+        res.status(200).send(booksdb);
+      });
+  }
+  catch (err) {
+    res.status(500).send('dbase error');
+  }
+});
 
-  });
+app.post('/books', (req, res) => {
+  try{
+    let {title, description, status, email} = req.body
+    let newBook = new BookModel({title, description, status, email});
+    newBook.save();
+    res.send(newBook);
+  }catch (err){
+    res.status(500).send('something went wrong adding your book')
+  }
+});
+
+app.delete('/books/:id', async (req, res) => {
+  let id = req.params.id;
+  await BookModel.findByIdAndDelete(id);
+  res.send(`Successfully Removed book ID: ${id}`);
+})
+
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
 
