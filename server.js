@@ -47,7 +47,7 @@ app.get('/test', (request, response) => {
 })
 
 mongoose.connect('mongodb://127.0.0.1:27017/books', {
-  useNewURLParser: true,
+  useNewUrlParser: true,
   useUnifiedTopology: true
 })
   .then(async () => {
@@ -60,18 +60,14 @@ app.get('/seed', Seed);
 app.get('/add', AddBook)
 
 app.get('/books', (req, res) => {
-  // console.log('I am here')
+  console.log(req.headers);
+  console.log(req.params);
   try {
-    // console.log('I am also here just an fyi')
     const token = req.headers.authorization.split(' ')[1];
-    // console.log(token);
-    //from the docs. 
     jwt.verify(token, getKey, {}, function (err, user) {
-      // console.log('I am in the token now hehehe')
       if (err) {
-        response.status(500).send('invalid token');
+        res.status(500).send('invalid token');
       }
-      //BookModel refers to the schema we created! 
       BookModel.find((err, booksdb)=> {
         res.status(200).send(booksdb);
       });
@@ -81,18 +77,6 @@ app.get('/books', (req, res) => {
     res.status(500).send('dbase error');
   }
 })
-
-app.get('/books-test', (req, res) => {
-  // console.log('I am here')
-  try {
-    BookModel.find((err, booksdb)=> {
-        res.status(200).send(booksdb);
-      });
-  }
-  catch (err) {
-    res.status(500).send('dbase error');
-  }
-});
 
 app.post('/books', (req, res) => {
   try{
@@ -105,11 +89,29 @@ app.post('/books', (req, res) => {
   }
 });
 
-app.delete('/books/:id', async (req, res) => {
+app.delete('/books/:id', (req, res) => {
+  console.log(req.params);
+  console.log(req.query);
   let id = req.params.id;
-  await BookModel.findByIdAndDelete(id);
-  res.send(`Successfully Removed book ID: ${id}`);
-})
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+    jwt.verify(token, getKey, {}, async function (err, user) {
+      if (err) {
+        res.status(500).send('invalid token');
+  }else {
+    let email = req.query.email;
+    console.log(email, user.email);
+    if (email === user.email){
+      await BookModel.findByIdAndDelete(id)
+      res.status(200).send(`Successfully Removed book ID: ${id}`);
+    }
+  };
+});
+  }
+  catch (err){
+    res.status(500).send('dbase error')
+  }
+});
 
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
