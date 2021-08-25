@@ -60,8 +60,8 @@ app.get('/seed', Seed);
 app.get('/add', AddBook)
 
 app.get('/books', (req, res) => {
-  console.log(req.headers);
-  console.log(req.params);
+  // console.log(req.headers);
+  // console.log(req.params);
   try {
     const token = req.headers.authorization.split(' ')[1];
     jwt.verify(token, getKey, {}, function (err, user) {
@@ -90,8 +90,8 @@ app.post('/books', (req, res) => {
 });
 
 app.delete('/books/:id', (req, res) => {
-  console.log(req.params);
-  console.log(req.query);
+  // console.log(req.params);
+  // console.log(req.query);
   let id = req.params.id;
   try {
     const token = req.headers.authorization.split(' ')[1];
@@ -100,7 +100,7 @@ app.delete('/books/:id', (req, res) => {
         res.status(500).send('invalid token');
   }else {
     let email = req.query.email;
-    console.log(email, user.email);
+    // console.log(email, user.email);
     if (email === user.email){
       await BookModel.findByIdAndDelete(id)
       res.status(200).send(`Successfully Removed book ID: ${id}`);
@@ -112,6 +112,18 @@ app.delete('/books/:id', (req, res) => {
     res.status(500).send('dbase error')
   }
 });
+
+app.put('/books/:id', async (req, res) => {
+ try{ let id = req.params.id;
+  // let {title, description, status, email} = req.body;
+  const updatedBook = await BookModel.findByIdAndUpdate(id, {title, description, status, email}, {new: true, overwrite: true});
+
+  res.status(200).send(updatedBook);
+ } 
+ catch(error){
+   res.status(500).send(error);
+ }
+})
 
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
