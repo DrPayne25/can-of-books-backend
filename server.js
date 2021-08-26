@@ -43,7 +43,7 @@ app.get('/test', (request, response) => {
     }
     response.send(user);
   })
-  
+
 })
 
 mongoose.connect('mongodb://127.0.0.1:27017/books', {
@@ -68,7 +68,7 @@ app.get('/books', (req, res) => {
       if (err) {
         res.status(500).send('invalid token');
       }
-      BookModel.find((err, booksdb)=> {
+      BookModel.find((err, booksdb) => {
         res.status(200).send(booksdb);
       });
     })
@@ -79,12 +79,12 @@ app.get('/books', (req, res) => {
 })
 
 app.post('/books', (req, res) => {
-  try{
-    let {title, description, status, email} = req.body
-    let newBook = new BookModel({title, description, status, email});
+  try {
+    let { title, description, status, email } = req.body
+    let newBook = new BookModel({ title, description, status, email });
     newBook.save();
     res.send(newBook);
-  }catch (err){
+  } catch (err) {
     res.status(500).send('something went wrong adding your book')
   }
 });
@@ -98,31 +98,36 @@ app.delete('/books/:id', (req, res) => {
     jwt.verify(token, getKey, {}, async function (err, user) {
       if (err) {
         res.status(500).send('invalid token');
-  }else {
-    let email = req.query.email;
-    // console.log(email, user.email);
-    if (email === user.email){
-      await BookModel.findByIdAndDelete(id)
-      res.status(200).send(`Successfully Removed book ID: ${id}`);
-    }
-  };
-});
+      } else {
+        let email = req.query.email;
+        // console.log(email, user.email);
+        if (email === user.email) {
+          await BookModel.findByIdAndDelete(id)
+          res.status(200).send(`Successfully Removed book ID: ${id}`);
+        }
+      };
+    });
   }
-  catch (err){
+  catch (err) {
     res.status(500).send('dbase error')
   }
 });
 
 app.put('/books/:id', async (req, res) => {
- try{ let id = req.params.id;
-  // let {title, description, status, email} = req.body;
-  const updatedBook = await BookModel.findByIdAndUpdate(id, {title, description, status, email}, {new: true, overwrite: true});
+  try {
+    let myId = req.params.id;
+    console.log(req.body);
+    console.log(req.params)
+    console.log(myId);
+    let { title, description, status, email } = req.body;
+    const updatedBook = await BookModel.findByIdAndUpdate(myId, { title, description, status, email }, { new: true, overwrite: true });
 
-  res.status(200).send(updatedBook);
- } 
- catch(error){
-   res.status(500).send(error);
- }
+    console.log('UpdatedBook:', updatedBook);
+    res.status(200).send(updatedBook);
+  }
+  catch (error) {
+    res.status(500).send('Unable to update book');
+  }
 })
 
 
